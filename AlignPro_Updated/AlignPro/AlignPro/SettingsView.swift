@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @Binding var isLoggedIn: Bool
+    @State var showAdvanced: Bool = false
     @AppStorage("postureThreshold") private var postureThreshold: Int = 40
     @AppStorage("notificationsEnabled") private var notificationsEnabled: Bool = true // ✅ Toggle notifications
 
@@ -30,20 +31,59 @@ struct SettingsView: View {
                     .padding([.leading, .bottom, .trailing])
 
                     // ✅ Adjust Posture Sensitivity
-                    VStack(alignment: .leading) {
-                        Text("Posture Alert Sensitivity")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(Color("Text Colour"))
-
-                        Stepper("Threshold: \(postureThreshold)%", value: $postureThreshold, in: 10...90, step: 5)
-                            .padding(.horizontal)
-                            .onChange(of: postureThreshold) { newValue in
-                                print("⚙️ New posture threshold set: \(newValue)%")
-                            }
+                    // Advanced sensitivity controls
+                    if showAdvanced{
+                        VStack(alignment: .leading){
+                            Text("Posture Alert Sensitivity")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(Color("Text Colour"))
+                            
+                            TextField("Number from 10 - 90", value: $postureThreshold, format: .number)
+                                .keyboardType(.numberPad)
+                                .textFieldStyle(.roundedBorder)
+                                //.padding([.leading, .bottom, .trailing])
+                            
+                            Text("Enter a number from 10 - 90")
+                                .foregroundStyle(Color("Text Colour"))
+                        }
+                        .padding()
+                            
+                        Button("Hide Advanced Sensitivity Field") {
+                            showAdvanced = false
+                        }
+                        .padding(.all)
+                        .foregroundStyle(Color("Button Text Colour"))
+                        .fontWeight(.semibold)
+                        .background(Color("AccentColor"))
+                        .clipShape(Capsule())
+                        
                     }
-                    .padding()
-                    //.background(RoundedRectangle(cornerRadius: 10).fill(Color.white).shadow(radius: 5))
+                    // Basic sensitivity controls
+                    else{
+                        VStack(alignment: .leading){
+                            Text("Posture Alert Sensitivity")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(Color("Text Colour"))
+                            
+                            Stepper("Threshold: \(postureThreshold)%", value: $postureThreshold, in: 10...90, step: 10)
+                                .padding(.horizontal)
+                                .onChange(of: postureThreshold) { newValue in
+                                    print("⚙️ New posture threshold set: \(newValue)%")
+                                }
+                        }
+                        .padding()
+                        
+                        Button("Show Advanced Sensitivity Field") {
+                            showAdvanced = true
+                        }
+                        .padding(.all)
+                        .foregroundStyle(Color("Button Text Colour"))
+                        .fontWeight(.semibold)
+                        .background(Color("AccentColor"))
+                        .clipShape(Capsule())
+                    }
 
                     Spacer()
 
