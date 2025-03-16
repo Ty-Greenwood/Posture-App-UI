@@ -39,16 +39,20 @@ struct SettingsView: View {
                                 .fontWeight(.semibold)
                                 .foregroundStyle(Color("Text Colour"))
                             
-                            TextField("Number from 10 - 90", value: $postureThreshold, format: .number)
-                                .keyboardType(.numberPad)
-                                .textFieldStyle(.roundedBorder)
-                                //.padding([.leading, .bottom, .trailing])
-                            
-                            Text("Enter a number from 10 - 90")
-                                .foregroundStyle(Color("Text Colour"))
+                            // Actual input
+                            Stepper("Threshold: \(postureThreshold)%", value: $postureThreshold, in: 10...90, step: 5)
+                                .padding(.horizontal)
+                                .onChange(of: postureThreshold) { newValue in
+                                    print("⚙️ New posture threshold set: \(newValue)%")
+                                }
                         }
+                        .frame(alignment: .leading)
                         .padding()
-                            
+                        
+                        Text("The posture sensitivity percentage is the accepted deviation from good posture, so lower percentages correspond with higher sensitivities.")
+                            .foregroundStyle(Color("Text Colour"))
+                            .padding([.bottom, .horizontal])
+                        
                         Button("Hide Advanced Sensitivity Field") {
                             showAdvanced = false
                         }
@@ -61,19 +65,44 @@ struct SettingsView: View {
                     }
                     // Basic sensitivity controls
                     else{
-                        VStack(alignment: .leading){
+                        VStack(){
                             Text("Posture Alert Sensitivity")
                                 .font(.title2)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(Color("Text Colour"))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                //.padding(.bottom)
                             
-                            Stepper("Threshold: \(postureThreshold)%", value: $postureThreshold, in: 10...90, step: 10)
-                                .padding(.horizontal)
-                                .onChange(of: postureThreshold) { newValue in
-                                    print("⚙️ New posture threshold set: \(newValue)%")
+                            // Actual input
+                            Menu {
+                                Button("High - 15%"){
+                                    postureThreshold = 15
+                                    print("⚙️ New posture threshold set: \(postureThreshold)%")
                                 }
+                                Button("Medium - 30%"){
+                                    postureThreshold = 30
+                                    print("⚙️ New posture threshold set: \(postureThreshold)%")
+                                }
+                                Button("Low - 45%"){
+                                    postureThreshold = 45
+                                    print("⚙️ New posture threshold set: \(postureThreshold)%")
+                                }
+                            } label: {
+                                Text("Sensitivity Select")
+                                    .foregroundStyle(Color("Button Text Colour"))
+                                    .fontWeight(.semibold)
+                                    .padding()
+                                    .background(Color("AccentColor"))
+                                    .clipShape(Capsule())
+                                    //.frame(alignment: .center)
+                            }
                         }
+                        //.frame(maxWidth: .infinity, alignment: .leading)
                         .padding()
+                        
+                        Text("The posture sensitivity percentage is the accepted deviation from good posture, so lower percentages correspond with higher sensitivities.")
+                            .foregroundStyle(Color("Text Colour"))
+                            .padding([.bottom, .horizontal])
                         
                         Button("Show Advanced Sensitivity Field") {
                             showAdvanced = true
